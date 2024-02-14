@@ -1,6 +1,6 @@
-<!-- _textChunk is a class for parsing text -->
+<!-- text is a class for chunking text -->
 
-# class _textChunk
+# class text
 
 
 
@@ -34,8 +34,8 @@
 * Trim characters will be *Null*
 
 ```4d
-	var $text : cs._textChunk
-	$dataO:=cs._textChunk.new ( File($filename).getText() )
+	var $text : cs.chunk.text
+	$dataO:=cs.chunk.text.new ( File($filename).getText() )
 ```
 
 
@@ -55,9 +55,9 @@ CSV files originally were of this format...
 
 ```4d
 	var $text : Text
-	var $dataO : cs._textChunk
+	var $dataO : cs.chunk.text
 	$text := File($filename).getText()
-	$dataO := cs._textChunk.new ( $text ; "\"" )
+	$dataO := cs.chunk.text.new ( $text ; "\"" )
 	$dataO.setItemDelimiter ( "," )
 ```
 
@@ -67,8 +67,8 @@ CSV files originally were of this format...
 
 ```4d
 var $text : Text
-var $dataO : cs._textChunk
-$dataO:= cs._textChunk.new()
+var $dataO : cs.chunk.text
+$dataO:= cs.chunk.text.new()
 ...
 $dataO.setText ( $text )
 $dataO.setLineDelimiter ( "\r\n" )

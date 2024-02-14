@@ -1,0 +1,300 @@
+{
+	"_method_": {},
+	"cs.chunk": {
+		"text": {
+			"new()": {
+				"Syntax": "**.new**( *text* : Text; *trimChars* : Variant )",
+				"Params": [
+					[
+						"text",
+						"Text",
+						"->"
+					],
+					[
+						"trimChars",
+						"Variant",
+						"->"
+					]
+				],
+				"Summary": ""
+			}
+		}
+	},
+	"text": {
+		"setText()": {
+			"Syntax": "**.setText**( *what* : Text )",
+			"Params": [
+				[
+					"what",
+					"Text",
+					"->"
+				]
+			],
+			"Summary": ""
+		},
+		"word()": {
+			"Syntax": "**.word**( *number* : Integer )->word : Text",
+			"Params": [
+				[
+					"number",
+					"Integer",
+					"->"
+				],
+				[
+					"word",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"getLineDelimiter()": {
+			"Syntax": "**.getLineDelimiter**()->delimiter : Text",
+			"Params": [
+				[
+					"delimiter",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"setTrimChars()": {
+			"Syntax": "**.setTrimChars**( *what* : Text )",
+			"Params": [
+				[
+					"what",
+					"Text",
+					"->"
+				]
+			],
+			"Summary": ""
+		},
+		"setLineDelimiter()": {
+			"Syntax": "**.setLineDelimiter**( *what* : Text )",
+			"Params": [
+				[
+					"what",
+					"Text",
+					"->"
+				]
+			],
+			"Summary": ""
+		},
+		"numLines()": {
+			"Syntax": "**.numLines**()->numLines : Integer",
+			"Params": [
+				[
+					"numLines",
+					"Integer",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"lineOffset()": {
+			"Syntax": "**.lineOffset**( *what* : Text; *wholeLine* : Variant )->offset : Integer",
+			"Params": [
+				[
+					"what",
+					"Text",
+					"->"
+				],
+				[
+					"wholeLine",
+					"Variant",
+					"->"
+				],
+				[
+					"offset",
+					"Integer",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"setItemDelimiter()": {
+			"Syntax": "**.setItemDelimiter**( *what* : Text )",
+			"Params": [
+				[
+					"what",
+					"Text",
+					"->"
+				]
+			],
+			"Summary": ""
+		},
+		"lineItems()": {
+			"Syntax": "**.lineItems**( *lineNumber* : Integer ) : Collection",
+			"Params": [
+				[
+					"lineNumber",
+					"Integer",
+					"->"
+				],
+				[
+					"",
+					"Collection",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"lineItem()": {
+			"Syntax": "**.lineItem**( *lineNumber* : Integer; *itemNumber* : Integer ) : Text",
+			"Params": [
+				[
+					"lineNumber",
+					"Integer",
+					"->"
+				],
+				[
+					"itemNumber",
+					"Integer",
+					"->"
+				],
+				[
+					"",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"getItems()": {
+			"Syntax": "**.getItems**()->items : Collection",
+			"Params": [
+				[
+					"items",
+					"Collection",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"itemOffset()": {
+			"Syntax": "**.itemOffset**( *text* : Text; *wholeItem* : Variant )->offset : Integer",
+			"Params": [
+				[
+					"text",
+					"Text",
+					"->"
+				],
+				[
+					"wholeItem",
+					"Variant",
+					"->"
+				],
+				[
+					"offset",
+					"Integer",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"getTrimChars()": {
+			"Syntax": "**.getTrimChars**()->text : Text",
+			"Params": [
+				[
+					"text",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"numItems()": {
+			"Syntax": "**.numItems**()->numItems : Integer",
+			"Params": [
+				[
+					"numItems",
+					"Integer",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"getText()": {
+			"Syntax": "**.getText**()->text : Text",
+			"Params": [
+				[
+					"text",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"getItemDelimiter()": {
+			"Syntax": "**.getItemDelimiter**()->delimiter : Text",
+			"Params": [
+				[
+					"delimiter",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"trim()": {
+			"Syntax": "**.trim**( *what* : Text )->trimmed : Text",
+			"Params": [
+				[
+					"what",
+					"Text",
+					"->"
+				],
+				[
+					"trimmed",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"line()": {
+			"Syntax": "**.line**( *lineNumber* : Integer )->line : Text",
+			"Params": [
+				[
+					"lineNumber",
+					"Integer",
+					"->"
+				],
+				[
+					"line",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"item()": {
+			"Syntax": "**.item**( *itemNumber* : Integer )->item : Text",
+			"Params": [
+				[
+					"itemNumber",
+					"Integer",
+					"->"
+				],
+				[
+					"item",
+					"Text",
+					"<-"
+				]
+			],
+			"Summary": ""
+		},
+		"items()": {
+			"Syntax": "**.items**()->items : Collection",
+			"Params": [
+				[
+					"items",
+					"Collection",
+					"<-"
+				]
+			],
+			"Summary": ""
+		}
+	}
+}

@@ -17,9 +17,6 @@ Project/Trash/
 ehthumbs.db
 Thumbs.db
 
-Resources/[pP]rivate/
-*.json
-
 .gitattributes
 *.sublime*
 
