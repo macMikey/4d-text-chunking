@@ -2,7 +2,6 @@
 
 # Data folder
 [dD][aA][tT][aA]/
-*.4DD
 
 DerivedData/
 
@@ -17,13 +16,12 @@ Project/Trash/
 ehthumbs.db
 Thumbs.db
 
-.gitattributes
-*.sublime*
+Resources/[pP]rivate/
 
+data.*
+*Match
 
-*CompiledCode/
-*Libraries/
+*journal
 
-*.4DSettings
-
-__MACOSX
+*4DD
+!settings.4DSettings

@@ -255,6 +255,8 @@ Function _tokenize($retokenize : Variant)
 		$lineObject.items:=$itemsC
 		$lineObject.words:=$wordsC
 		This._lines.push($lineObject)
+		This._items.combine($itemsC)
+		This._words.combine($wordsC)
 	End for each   //($line;$linesC)
 	//</apply the line and item splits>
 	If ($progressBoxEnabled)
