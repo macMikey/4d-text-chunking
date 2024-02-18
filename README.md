@@ -12,12 +12,12 @@ For example, if I want to manage a .csv/.tsv/.txt file (export from a db), the f
 
 
 
-* The class attempts to figure out what the line delimiter is
+* The class attempts to figure out what the line delimiter is, based on the platform that the code is running on.
 * All three types of chunks (lines, items, and words) terminate at a line-delimiter.
 
 * Line and item delimiters can be manually set. The word delimiter is limited to the space character.
 
-* Functions that return text will be trimmed
+* Functions that do not return raw data will have their results trimmed
   * Trimming removes certain character strings from the beginning and ending of text
   * The trim string can be set by you
   * The trim string can be any number of characters

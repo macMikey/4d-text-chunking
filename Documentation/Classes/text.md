@@ -7,10 +7,10 @@
 ## Description
 
 * Text routines for giving me more LC-ish chunk management
-* Automatically tries to guess what the line-delimiter will be (`\r`, `\n`, or `\r\n`). You can override this, after you instantiate the object.
+* Automatically tries to guess what the line-delimiter will be (`\r`, `\n`, or `\r\n`), based on the platform the code is running on. You can override this, after you instantiate the object.
 * Both items and words are assumed to terminate at the end of line.
 * The text is not tokenized until a function is called. This allows you to instantiate and set properties like **lineDelimiter** or **itemDelimiter**, first
-* Uses Base-1 indicies (1..n, not 0..n-1) - line 1 is the first line, not line 0.
+* Uses Base-1 indicies (1..n, not 0..n-1) - e.g. line 1 is the first line
 
 
 
@@ -88,6 +88,12 @@ None
 
 
 
+### column ( $columnNumber : integer ) : collection
+
+Returns the the collection of values at item **$columnNumber**
+
+
+
 ### getItemDelimiter() -> $delimiter : text
 
 Returns the current item delimiter
@@ -96,8 +102,7 @@ Returns the current item delimiter
 
 ### getItems() -> $items : collection
 
-* Returns the current items as a collection
-* The elements in the collection are not trimmed.
+Returns the current items as a collection
 
 
 
@@ -115,20 +120,19 @@ Returns the trimmed text of the object
 
 ### getTrimChars() -> $chars:text
 
-Returns the current characters being used to trim the beginning and end of **strings** returned by calls to the object. Collections are not trimmed.
+Returns the current characters being used to trim the beginning and end of **strings** returned by calls to the object.
 
 
 
 ### item ( $number : text ) -> $valueOfItem : text
 
-* Default delimiters are `\t` and the end-of-line delimiter
-* Trims the text before returning it
+Default delimiters are `\t` and the end-of-line delimiter
 
 
 
 ### line ( $lineNumber : integer  ) -> $text : text
 
-* Base 1
+* Synonym for **row()**
 
 * Returns the trimmed text of line $lineNumber of the object
 
@@ -136,8 +140,7 @@ Returns the current characters being used to trim the beginning and end of **str
 
 ### lineItem ( $lineNumber : integer ; $itemNumber : integer ) -> $text : text
 
-* Base 1
-* Returns the trimmed text of item **$itemNumber** of line **$lineNumber**
+Returns the trimmed text of item **$itemNumber** of line **$lineNumber**
 
 
 
@@ -152,22 +155,28 @@ Returns the current characters being used to trim the beginning and end of **str
 ### lineOffset ( $what : text { ; $wholeLine : boolean } ) -> $lineNumber : integer
 
 * **$wholeLine** defaults to **True**
-* Base 1
 * Returns the line number that **$what** is/is on or **0**, otherwise
 
 
 
 ### numItems ( ) -> $count : integer
 
-Returns the number of delimiter-separated items. There will always be at least one item, even if the delimiter is not present. If the delimiter is present, there will always be at least two items, even if the last item is blank.
+* Returns the number of delimiter-separated items.
+* There will always be at least one item, even if the delimiter is not present.
+* If the delimiter is present, there will always be at least two items, even if the last item is blank.
 
 
 
 ### numLines () -> $count : integer
 
-* Base 1
+Returns the number of lines in the text. This is always at least one line. **Blank/null final lines are counted**
 
-* Returns the number of lines in the text. This is always at least one line. **Blank/null final lines are counted**
+
+
+### row ( $rowNumber : integer ) : text
+
+* Synonym for **line**
+* Returns the trimmed text of line $rowNumber
 
 
 
@@ -193,12 +202,18 @@ Sets the line delimiter
 ### setTrimChars ( $chars : text)
 
 * Sets the string to be removed from the beggining and end of all text values returned by the object's functions.
-* If a function returns a collection, the values inside the collection are not trimmed.
 
 ```4D
 $trimChars := char(space) + char(double quote)
 $dataO.setTrimChars ( $trimChars )
 ```
+
+
+
+### tokenize()
+
+* automatically called, if needed
+* parses, sets properties
 
 
 
@@ -218,7 +233,8 @@ Removes 1..n **this.getTrimChars()** characters from the front and back of *$wha
 ## Private Properties
 name | datatype | description
 --|--|--
-._dirty | boolean | whether the object needs to be re-tokenized before use
+._columns | collection | the transpose of the tokenized lines - instead of a collection of items from a line, it's a collection of items from a column 
+._dirty | boolean | whether the object needs to be re-tokenized before the next time a value is retrieved 
 ._items | collection | the text separated into items
 ._itemDelimiter | text | the item delimiter
 ._lines | collection | collection of objects representing each line:<br>**.raw** (text): the raw text of the line ***untrimmed***<br>**.items** (collection): The items of the line 
@@ -233,6 +249,6 @@ name | datatype | description
 
 
 
-### _tokenize()
+### _resetProperties()
 
-* Creates the **this._lines** and **this._items** properties
+resets properties, wipes collections, sets the object to dirty.

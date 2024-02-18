@@ -28,6 +28,12 @@ Class constructor($text : Text; $trimChars : Variant)
 	
 	
 	
+Function column($number) : Collection
+	return This._getColumn($number)
+	// _______________________________________________________________________________________________________________
+	
+	
+	
 Function getItemDelimiter()->$delimiter : Text
 	return This._getItemDelimiter()
 	// _______________________________________________________________________________________________________________
@@ -119,7 +125,7 @@ Function lineOffset($what : Text; $wholeLine : Variant)->$offset : Integer
 		$theLine:=This.line($i)
 		If (($theLine=$what) || (Not($wholeLine) & (Position($what; $theLine)>0)))  // if we match the entire line or if we don't care if we match the entire line and we are on the line
 			return $i
-		End if   //(($theLine=$what) | (Not($wholeLine) & (position ($what;$theLine)>0)))
+		End if   //((($theLine=$what) || (Not($wholeLine) & (Position($what; $theLine)>0))) 
 	End for   // ($i;1;this.NumLines())
 	// _______________________________________________________________________________________________________________
 	
@@ -133,6 +139,12 @@ Function numItems()->$numItems : Integer
 	
 Function numLines()->$numLines : Integer
 	return This._getNumLines()
+	// _______________________________________________________________________________________________________________
+	
+	
+	
+Function row($rowNumber : Integer) : Integer
+	return This._getLine($rowNumber)
 	// _______________________________________________________________________________________________________________
 	
 	
@@ -161,41 +173,9 @@ Function setTrimChars($what : Text)
 	
 	
 	
-Function trim($what : Text)->$trimmed : Text
-	$ofWhat:=This._getTrimChars()
-	
-	While (Length($what)>0 && (Position($what[[1]]; $ofWhat)>0))
-		$what:=Substring($what; 2; Length($what))
-	End while 
-	
-	While (Length($what)>0 && (Position($what[[Length($what)]]; $ofWhat)>0))
-		$what:=Substring($what; 1; (Length($what)-1))
-	End while 
-	
-	return $what
-	// _______________________________________________________________________________________________________________
-	
-	
-Function word($number : Integer)->$word : Text
-	return This.trim(This._getWord($number))
-	// _______________________________________________________________________________________________________________
-	
-	
-	
-/*
-================================================================================================================
-=                                                                                                             = 	
-=                                           P R I V A T E    A P I                                            = 
-=                                                                                                             = 
- ===============================================================================================================
-*/
-	
-	
-	
-Function _tokenize($retokenize : Variant)
-	
+Function tokenize($retokenize : Variant)
 	var $progressBoxEnabled : Boolean
-	var $progressBoxID; $counter; $numLines : Integer
+	var $progressBoxID; $counter; $numLines; $numItems; $numWords; $maxItems; $i; $j : Integer
 	var $lineDelimiter; $itemDelimiter; $line : Text
 	var $linesC; $itemsC; $wordsC : Collection
 	var $lineObject : Object
@@ -210,9 +190,7 @@ Function _tokenize($retokenize : Variant)
 	End if 
 	//</skip tokenizing if not told to redo it AND we have already tokenized>
 	
-	This._lines:=New collection()
-	This._items:=New collection()
-	This._words:=New collection()
+	This._resetProperties()
 	
 	$lineDelimiter:=This._getLineDelimiter()
 	$itemDelimiter:=This._getItemDelimiter()
@@ -233,16 +211,16 @@ Function _tokenize($retokenize : Variant)
 		Progress SET PROGRESS($progressBoxID; -1)
 		$counter:=0
 	End if   //$progressBoxEnabled
+	
+	
 	For each ($line; $linesC)
+		$counter+=1
 		If ($progressBoxEnabled)
-			$counter+=1
 			Case of 
 				: (Progress Stopped($progressBoxID))
 					Progress QUIT($progressBoxID)
 					This._setDirty(True)  // undo any work we've already done in tokenizing the data so we don't wind up with partially-tokenized data
-					This._lines:=New collection()
-					This._items:=New collection()
-					This._words:=New collection()
+					This._resetProperties()
 					return Null
 				: (($counter%100)=0)
 					Progress SET PROGRESS($progressBoxID; ($counter/$numLines))
@@ -251,18 +229,71 @@ Function _tokenize($retokenize : Variant)
 		End if   //$progressBoxEnabled
 		$lineObject:=New object("raw"; $line; "items"; Null)
 		$itemsC:=Split string($line; $itemDelimiter)
+		
+		
+		//<add columns, if necessary>
+		$numItems:=$itemsC.length
+		While ($numItems>$maxItems)
+			$maxItems+=1
+			$c:=New collection()
+			$c:=$c.resize(($counter-2); "")  // fill everything before the current row with blanks. will push new values, shortly.
+			This._columns.push($c)
+		End while   //($numItems>$maxItems)
+		//</add columns, if necessary>
+		
+		
+		//<trim and add item to the column collection>
+		For ($i; 0; ($numItems-1))
+			$item:=This.trim($itemsC[$i])
+			$itemsC[$i]:=$item
+			This._columns[$i].push($item)
+		End for   //($i; 0; ($numItems-1))
+		//</trim and add item to the column collection>
+		
+		
+		//<process words>
 		$wordsC:=Split string($line; " ")
+		$numWords:=$wordsC.length
+		For ($i; 0; ($numWords-1))
+			$wordsC[$i]:=This.trim($wordsC[$i])
+		End for   // ($i; 0; ($numWords-1))
 		$lineObject.items:=$itemsC
 		$lineObject.words:=$wordsC
 		This._lines.push($lineObject)
 		This._items.combine($itemsC)
 		This._words.combine($wordsC)
 	End for each   //($line;$linesC)
-	//</apply the line and item splits>
+	//</process words>
+	
+	//</apply the line, item, word splits>
+	
+	
 	If ($progressBoxEnabled)
 		Progress QUIT($progressBoxID)
 	End if   //progressBoxEnabled
 	This._setDirty(False)
+	// _______________________________________________________________________________________________________________
+	
+	
+	
+Function trim($what : Text)->$trimmed : Text
+	$ofWhat:=This._getTrimChars()
+	
+	While (Length($what)>0 && (Position($what[[1]]; $ofWhat)>0))
+		$what:=Substring($what; 2; Length($what))
+	End while 
+	
+	While (Length($what)>0 && (Position($what[[Length($what)]]; $ofWhat)>0))
+		$what:=Substring($what; 1; (Length($what)-1))
+	End while 
+	
+	return $what
+	// _______________________________________________________________________________________________________________
+	
+	
+	
+Function word($number : Integer)->$word : Text
+	return This.trim(This._getWord($number))
 	// _______________________________________________________________________________________________________________
 	
 	
@@ -274,6 +305,17 @@ Function _tokenize($retokenize : Variant)
 =                                                                                                             = 
 ===============================================================================================================
 */
+	
+	
+	
+Function _getColumn($number : Integer) : Collection
+	$number:=($number || 1)-1  //working on a collection
+	This.tokenize(This._getDirty())
+	If ($number<0) || ($number>=This._columns.length)
+		return Null
+	End if 
+	return This._columns[$number]
+	// _______________________________________________________________________________________________________________
 	
 	
 	
@@ -291,8 +333,8 @@ Function _getItemDelimiter()->$delimiter : Text
 	
 Function _getItem($itemNumber : Integer)->$item : Text
 	$itemNumber:=($itemNumber || 1)-1  // working on a collection
-	This._tokenize(This._getDirty())
-	If ($itemNumber>(This._items.length-1))
+	This.tokenize(This._getDirty())
+	If ($itemNumber<0) || ($itemNumber>This._items.length)
 		return Null
 	End if 
 	return This._items[$itemNumber]
@@ -301,7 +343,7 @@ Function _getItem($itemNumber : Integer)->$item : Text
 	
 	
 Function _getItems()->$items : Collection
-	This._tokenize(This._getDirty())
+	This.tokenize(This._getDirty())
 	return This._items
 	// _______________________________________________________________________________________________________________
 	
@@ -309,7 +351,7 @@ Function _getItems()->$items : Collection
 	
 Function _getLine($lineNumber : Integer) : Variant
 	$lineNumber:=($lineNumber || 1)-1  // working on a collection
-	This._tokenize(This._getDirty())
+	This.tokenize(This._getDirty())
 	If ($lineNumber>(This._lines.length-1))
 		return Null
 	End if 
@@ -326,7 +368,7 @@ Function _getLineDelimiter()->$delimiter : Text
 	
 Function _getLineItems($lineNumber : Integer) : Collection
 	$lineNumber:=($lineNumber || 1)-1  // working on a collection
-	This._tokenize(This._getDirty())
+	This.tokenize(This._getDirty())
 	If ($lineNumber>(This._lines.length-1))
 		return Null
 	End if 
@@ -336,7 +378,7 @@ Function _getLineItems($lineNumber : Integer) : Collection
 	
 	
 Function _getNumItems()->$numItems : Integer
-	This._tokenize(This._getDirty())
+	This.tokenize(This._getDirty())
 	return This._items.length
 	// _______________________________________________________________________________________________________________
 	
@@ -345,7 +387,7 @@ Function _getNumItems()->$numItems : Integer
 Function _getNumLines()->$numLines : Integer
 	// don't tokenize a large file, since we're returning text, not a line object
 	
-	This._tokenize(This._getDirty())
+	This.tokenize(This._getDirty())
 	return This._lines.length
 	// _______________________________________________________________________________________________________________
 	
@@ -364,8 +406,8 @@ Function _getTrimChars()->$chars : Text
 	
 	
 Function _getWord($wordNumber)->$word : Text
-	$wordNumber:=$wordNumber || 1
-	This._tokenize(This._getDirty())
+	$wordNumber:=($wordNumber || 1)-1  // working on a collection
+	This.tokenize(This._getDirty())
 	$wordNumber-=1
 	If ($wordNumber>(This._words.length-1))
 		return Null
@@ -426,3 +468,20 @@ Function _setText($text : Text)
 Function _setTrimChars($chars : Text)
 	$chars:=$chars || ""
 	This._trimChars:=$chars
+	
+	
+	
+/* 
+===============================================================================================================
+=                                                                                                             = 
+=                                          P R I V A T E    A P I                                             = 
+=                                                                                                             = 
+===============================================================================================================
+*/
+Function _resetProperties
+	This._columns:=New collection()
+	This._items:=New collection()
+	This._lines:=New collection()
+	This._words:=New collection()
+	// _______________________________________________________________________________________________________________
+	
